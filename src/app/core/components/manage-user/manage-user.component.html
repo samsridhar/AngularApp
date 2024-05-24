@@ -13,8 +13,17 @@
       placeholder="Search..."
       class="form-control"
       #queryText
+      [(ngModel)]="inputValue"
+      (ngModelChange)="checkInput()"
     />
-    <button type="button" class="btn btn-warning ms-3">Search</button>
+    <button
+      [disabled]="isButtonDisabled"
+      type="button"
+      class="btn btn-warning ms-3"
+      (click)="onSearch(queryText.value)"
+    >
+      Search
+    </button>
   </div>
 </div>
 

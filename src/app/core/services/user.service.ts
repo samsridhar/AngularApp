@@ -1,7 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { HttpClient } from '@angular/common/http';
-import { CookieService } from 'ngx-cookie-service';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { User } from '../model/user.model';
 import { environment } from 'src/environments/environment';
 import { AddUserRequest } from '../model/add-user.model';
@@ -16,6 +15,17 @@ export class UserService {
   getAllUser(): Observable<User[]> {
     return this.http.get<User[]>(
       `${environment.apiBaseUrl}/api/ManageUser/getAllUser `
+    );
+  }
+
+  getAllUserBySearch(query?: string): Observable<User[]> {
+    let params = new HttpParams();
+    if (query) {
+      params = params.set('samAccount', query);
+    }
+    return this.http.post<User[]>(
+      `${environment.apiBaseUrl}/api/ManageUser/getAllUserBySearch?samAccount=${query}`,
+      query
     );
   }
 

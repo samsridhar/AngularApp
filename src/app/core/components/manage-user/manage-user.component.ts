@@ -11,11 +11,21 @@ import { User } from '../../model/user.model';
 })
 export class ManageUserComponent implements OnInit {
   userData$?: Observable<User[]>;
+  inputValue: string = '';
+  isButtonDisabled: boolean = true;
 
   constructor(private userService: UserService) {}
 
   ngOnInit(): void {
     setTimeout(() => (this.userData$ = this.userService.getAllUser()), 2000);
+  }
+
+  onSearch(query: string): void {
+    this.userData$ = this.userService.getAllUserBySearch(query);
+  }
+
+  checkInput() {
+    this.isButtonDisabled = this.inputValue.trim() === '';
   }
 
   //Delete User Data
