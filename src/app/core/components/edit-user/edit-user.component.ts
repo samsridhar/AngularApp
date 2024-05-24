@@ -13,17 +13,30 @@ import { updateUserRequest } from '../../model/update-user.model';
 })
 export class EditUserComponent implements OnInit, OnDestroy {
   id: string | null = null;
+  samAccountName: string;
   paramsSubscription?: Subscription;
   editUserSubscription?: Subscription;
   user?: User;
-  activeDirectoryUserId: number;
+  updateUserRequest: updateUserRequest;
+  activeUserId: number;
 
   constructor(
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.activeDirectoryUserId = this.id ? parseInt(this.id, 10) : 0;
+    this.samAccountName = '';
+    this.activeUserId = 0;
+    this.updateUserRequest = {
+      activeDirectoryUserId: 0,
+      samAccountName: '',
+      firstName: '',
+      lastName: '',
+      eMail: '',
+      telephoneNumber: '',
+      password: '',
+      roles: '',
+    };
   }
 
   ngOnInit(): void {
@@ -35,38 +48,35 @@ export class EditUserComponent implements OnInit, OnDestroy {
           // get the data from the API for this user Id
           this.userService.getUserById(this.id).subscribe({
             next: (response) => {
-              this.user = response;
-              console.log(this.user);
+              this.user = response[0];
+              this.samAccountName = response[0].samAccountName;
             },
           });
         }
       },
     });
+    if (this.id) {
+      this.activeUserId = this.convertToNumber(this.id);
+    }
+  }
+  convertToNumber(str: string, defaultValue = 0): number {
+    const num = parseInt(str, 10); // Assuming decimal base
+    return isNaN(num) ? defaultValue : num;
   }
 
   onFormSubmit() {
-    const updateUserRequest: updateUserRequest = {
-      activeDirectoryUserId:
-        this.user?.activeDirectoryUserId ?? this.activeDirectoryUserId,
-      samAccountName: this.user?.samAccountName ?? '',
-      firstName: this.user?.firstName ?? '',
-      lastName: this.user?.lastName ?? '',
-      eMail: this.user?.eMail ?? '',
-      telephoneNumber: this.user?.telephoneNumber ?? 0,
-      password: this.user?.password ?? '',
-      roles: this.user?.roles ?? '',
-    };
-
     // pass this object to service
-    if (this.id) {
-      this.editUserSubscription = this.userService
-        .updateCategory(this.id, updateUserRequest)
-        .subscribe({
-          next: (response) => {
-            this.router.navigateByUrl('/user');
-          },
-        });
-    }
+    this.updateUserRequest.activeDirectoryUserId = this.activeUserId;
+    this.updateUserRequest.samAccountName = this.samAccountName;
+
+    console.log(this.updateUserRequest);
+    this.editUserSubscription = this.userService
+      .updateUser(this.updateUserRequest)
+      .subscribe({
+        next: (response) => {
+          this.router.navigateByUrl('/user');
+        },
+      });
   }
 
   onDelete(): void {}

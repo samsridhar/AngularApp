@@ -4,7 +4,7 @@ export interface updateUserRequest {
   firstName: string;
   lastName: string;
   eMail: string;
-  telephoneNumber: number;
+  telephoneNumber: string;
   password: string;
   roles: string;
 }

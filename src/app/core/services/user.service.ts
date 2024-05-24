@@ -19,8 +19,8 @@ export class UserService {
     );
   }
 
-  getUserById(id: string): Observable<User> {
-    return this.http.post<User>(
+  getUserById(id: string): Observable<User[]> {
+    return this.http.post<User[]>(
       `${environment.apiBaseUrl}/api/ManageUser/getAllUserById?samAccount=${id}`,
       id
     );
@@ -33,10 +33,7 @@ export class UserService {
     );
   }
 
-  updateCategory(
-    id: string,
-    updateCategoryRequest: updateUserRequest
-  ): Observable<User> {
+  updateUser(updateCategoryRequest: updateUserRequest): Observable<User> {
     return this.http.post<User>(
       `${environment.apiBaseUrl}/api/ManageUser/updateUser`,
       updateCategoryRequest
