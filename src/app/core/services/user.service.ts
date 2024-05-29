@@ -13,9 +13,7 @@ export class UserService {
   constructor(private http: HttpClient) {}
 
   getAllUser(): Observable<User[]> {
-    return this.http.get<User[]>(
-      `${environment.apiBaseUrl}/api/ManageUser/getAllUser `
-    );
+    return this.http.get<User[]>(`${environment.apiBaseUrl}/api/ManageUser`);
   }
 
   getAllUserBySearch(query?: string): Observable<User[]> {
@@ -29,24 +27,32 @@ export class UserService {
     );
   }
 
-  getUserById(id: string): Observable<User[]> {
-    return this.http.post<User[]>(
-      `${environment.apiBaseUrl}/api/ManageUser/getAllUserById?samAccount=${id}`,
-      id
+  getUserById(id: string): Observable<User> {
+    return this.http.get<User>(
+      `${environment.apiBaseUrl}/api/ManageUser/${id}`
     );
   }
 
   addUser(model: AddUserRequest): Observable<void> {
     return this.http.post<void>(
-      `${environment.apiBaseUrl}/api/ManageUser/insertUser`,
+      `${environment.apiBaseUrl}/api/ManageUser`,
       model
     );
   }
 
-  updateUser(updateCategoryRequest: updateUserRequest): Observable<User> {
-    return this.http.post<User>(
-      `${environment.apiBaseUrl}/api/ManageUser/updateUser`,
+  updateUser(
+    id: number,
+    updateCategoryRequest: updateUserRequest
+  ): Observable<User> {
+    return this.http.put<User>(
+      `${environment.apiBaseUrl}/api/ManageUser/${id}`,
       updateCategoryRequest
+    );
+  }
+
+  deleteUser(id: number): Observable<User> {
+    return this.http.delete<User>(
+      `${environment.apiBaseUrl}/api/ManageUser/${id}`
     );
   }
 }

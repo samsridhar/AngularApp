@@ -18,11 +18,10 @@
           <label class="form-label">Sam AccountName</label>
           <input
             type="text"
-            disabled
             id="categoryUrlHandle"
             class="form-control"
             name="categoryUrlHandle"
-            value="{{ samAccountName }}"
+            [(ngModel)]="updateUserRequest.samAccountName"
           />
         </div>
         <div class="mt-3">

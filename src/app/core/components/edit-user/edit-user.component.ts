@@ -13,20 +13,16 @@ import { updateUserRequest } from '../../model/update-user.model';
 })
 export class EditUserComponent implements OnInit, OnDestroy {
   id: string | null = null;
-  samAccountName: string;
   paramsSubscription?: Subscription;
   editUserSubscription?: Subscription;
   user?: User;
   updateUserRequest: updateUserRequest;
-  activeUserId: number;
 
   constructor(
     private userService: UserService,
     private router: Router,
     private route: ActivatedRoute
   ) {
-    this.samAccountName = '';
-    this.activeUserId = 0;
     this.updateUserRequest = {
       activeDirectoryUserId: 0,
       samAccountName: '',
@@ -48,16 +44,14 @@ export class EditUserComponent implements OnInit, OnDestroy {
           // get the data from the API for this user Id
           this.userService.getUserById(this.id).subscribe({
             next: (response) => {
-              this.user = response[0];
-              this.samAccountName = response[0].samAccountName;
+              this.user = response;
+              this.updateUserRequest.activeDirectoryUserId =
+                response.activeDirectoryUserId;
             },
           });
         }
       },
     });
-    if (this.id) {
-      this.activeUserId = this.convertToNumber(this.id);
-    }
   }
   convertToNumber(str: string, defaultValue = 0): number {
     const num = parseInt(str, 10); // Assuming decimal base
@@ -66,12 +60,12 @@ export class EditUserComponent implements OnInit, OnDestroy {
 
   onFormSubmit() {
     // pass this object to service
-    this.updateUserRequest.activeDirectoryUserId = this.activeUserId;
-    this.updateUserRequest.samAccountName = this.samAccountName;
-
     console.log(this.updateUserRequest);
     this.editUserSubscription = this.userService
-      .updateUser(this.updateUserRequest)
+      .updateUser(
+        this.updateUserRequest.activeDirectoryUserId,
+        this.updateUserRequest
+      )
       .subscribe({
         next: (response) => {
           this.router.navigateByUrl('/user');
